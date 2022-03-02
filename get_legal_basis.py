@@ -1,9 +1,12 @@
 import csv, requests, json
 
 private_app_token = "abc123"
+subscription_type_id = "4833949"
 
 headers = {"Authorization":"Bearer " + private_app_token,
            'Content-Type': "application/json"}
+
+output_dict = []
 
 with open("email_list.csv", newline="") as f:
     reader = csv.reader(f)
@@ -19,11 +22,16 @@ with open("email_list.csv", newline="") as f:
             if "subscriptionStatuses" in statuses:
                 statuses = statuses["subscriptionStatuses"]
                 for status in statuses:
-                    if status["id"] == "4833949":
+                    if str(status["id"]) == str(subscription_type_id):
                         if "legalBasis" in status:
                             if status["legalBasis"]:
-                                print(row[0] + "," + status["legalBasis"])
+                                output_dict.append([row[0], status["legalBasis"]])
                 if not r:
-                    print(row[0] + ",FETCH_ERROR")
+                    print("could not fetch the communication preferences of " + row[0])
         except ValueError:
             print("could not process this row: " + str(row))
+
+                                            
+with open('legal_basis.csv', 'w', encoding='UTF8', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerows(output_dict)
