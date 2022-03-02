@@ -1,4 +1,4 @@
-import csv, requests, json
+import csv, requests
 
 private_app_token = "abc123"
 subscription_type_id = "4833949"
